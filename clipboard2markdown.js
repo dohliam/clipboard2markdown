@@ -4,22 +4,6 @@
   // http://pandoc.org/README.html#pandocs-markdown
   var pandoc = [
     {
-      filter: 'h1',
-      replacement: function (content, node) {
-        var underline = Array(content.length + 1).join('=');
-        return '\n\n' + content + '\n' + underline + '\n\n';
-      }
-    },
-
-    {
-      filter: 'h2',
-      replacement: function (content, node) {
-        var underline = Array(content.length + 1).join('-');
-        return '\n\n' + content + '\n' + underline + '\n\n';
-      }
-    },
-
-    {
       filter: 'sup',
       replacement: function (content) {
         return '^' + content + '^';
@@ -41,16 +25,9 @@
     },
 
     {
-      filter: 'hr',
-      replacement: function () {
-        return '\n\n* * * * *\n\n';
-      }
-    },
-
-    {
       filter: ['em', 'i', 'cite', 'var'],
       replacement: function (content) {
-        return '*' + content + '*';
+        return '_' + content + '_';
       }
     },
 
@@ -90,17 +67,20 @@
     {
       filter: 'li',
       replacement: function (content, node) {
-        content = content.replace(/^\s+/, '').replace(/\n/gm, '\n    ');
-        var prefix = '-   ';
+        content = content.replace(/^\s+/, '').replace(/\n/gm, '\n  ');
+        var prefix = '* ';
         var parent = node.parentNode;
+        var licount = parent.childElementCount;
 
         if (/ol/i.test(parent.nodeName)) {
           var index = Array.prototype.indexOf.call(parent.children, node) + 1;
           prefix = index + '. ';
-          while (prefix.length < 4) {
-            prefix += ' ';
+          if (licount > 9) {
+            while (prefix.length < 4) {
+              prefix += ' ';
+            }
           }
-        }
+	}
 
         return prefix + content;
       }
